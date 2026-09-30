@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Produto - Doceria</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #8B4513; text-align: center; margin-top: 0; }
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #8B4513; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #A0522D; }
+        .mensagem { margin-top: 15px; padding: 10px; text-align: center; border-radius: 5px; display: none; }
+        .sucesso { background-color: #d4edda; color: #155724; display: block; }
+        .erro { background-color: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cadastrar Produto</h1>
+
+        <form id="formCadastro">
+            <div class="campo">
+                <label>Nome do Produto *</label>
+                <input type="text" id="nome" required placeholder="Ex: Bolo de Chocolate">
+            </div>
+
+            <div class="campo">
+                <label>Descrição</label>
+                <textarea id="descricao" placeholder="Ex: Delicioso bolo recheado..."></textarea>
+            </div>
+
+            <div class="campo">
+                <label>Preço (R$) *</label>
+                <input type="number" id="preco" step="0.01" required placeholder="0.00">
+            </div>
+
+            <div class="campo">
+                <label>Tempo de Preparo (minutos) *</label>
+                <input type="number" id="tempoPreparo" required placeholder="Ex: 30">
+            </div>
+
+            <button type="submit">Salvar Produto</button>
+        </form>
+
+        <div id="msg" class="mensagem"></div>
+    </div>
+
+    <script>
+        const formulario = document.getElementById('formCadastro');
+        const divMsg = document.getElementById('msg');
+
+        formulario.addEventListener('submit', function(evento) {
+            evento.preventDefault();
+
+            // Criando o produto com um ID único baseado no tempo atual
+            const novoProduto = {
+                id: Date.now(),
+                nome: document.getElementById('nome').value,
+                descricao: document.getElementById('descricao').value,
+                preco: parseFloat(document.getElementById('preco').value),
+                tempoPreparo: parseInt(document.getElementById('tempoPreparo').value)
+            };
+
+            // Pega os produtos que já estão salvos no navegador ou cria uma lista nova
+            let produtosSalvos = JSON.parse(localStorage.getItem('produtos_doceria')) || [];
+            
+            // Adiciona o novo produto na lista
+            produtosSalvos.push(novoProduto);
+
+            // Salva de volta no navegador
+            localStorage.setItem('produtos_doceria', JSON.stringify(produtosSalvos));
+
+            divMsg.textContent = 'Produto cadastrado com sucesso!';
+            divMsg.className = 'mensagem sucesso';
+            formulario.reset();
+        });
+    </script>
+</body>
+</html>

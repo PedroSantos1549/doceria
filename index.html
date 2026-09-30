@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doceria</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
+        h1 { color: #8B4513; text-align: center; }
+        #busca { width: 100%; max-width: 400px; padding: 10px; margin: 20px auto; display: block; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; color: #333; }
+        .preco { color: #2e8b57; font-weight: bold; font-size: 18px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <h1>Doceria Artesanal</h1>
+
+    <input type="text" id="busca" placeholder="Pesquisar produto...">
+
+    <div id="listaProdutos" class="grid">
+        <p style="text-align: center;">Carregando...</p>
+    </div>
+
+    <script>
+        // Pega os produtos salvos no navegador
+        let listaGlobal = JSON.parse(localStorage.getItem('produtos_doceria')) || [];
+
+        function mostrarProdutos(produtos) {
+            const divApp = document.getElementById('listaProdutos');
+            
+            if (produtos.length === 0) {
+                divApp.innerHTML = '<p style="text-align: center;">Nenhum produto cadastrado ainda.</p>';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < produtos.length; i++) {
+                let p = produtos[i];
+                html += `
+                    <div class="card">
+                        <h3>${p.nome}</h3>
+                        <p>${p.descricao ? p.descricao : 'Sem descrição'}</p>
+                        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+                    </div>
+                `;
+            }
+            divApp.innerHTML = html;
+        }
+
+        const inputBusca = document.getElementById('busca');
+        inputBusca.addEventListener('input', function() {
+            let texto = inputBusca.value.toLowerCase();
+            let filtrados = [];
+            for (let i = 0; i < listaGlobal.length; i++) {
+                if (listaGlobal[i].nome.toLowerCase().includes(texto)) {
+                    filtrados.push(listaGlobal[i]);
+                }
+            }
+            mostrarProdutos(filtrados);
+        });
+
+        mostrarProdutos(listaGlobal);
+    </script>
+</body>
+</html>
