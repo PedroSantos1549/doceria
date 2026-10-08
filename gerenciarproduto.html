@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Produtos - Doceria</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
+        h1 { color: #8B4513; text-align: center; }
+        table { width: 100%; max-width: 900px; margin: 20px auto; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th { background-color: #8B4513; color: white; padding: 12px; text-align: left; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        tr:hover { background-color: #fafafa; }
+        .btn-apagar { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-apagar:hover { background-color: #c82333; }
+        .aviso { text-align: center; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Gerenciar Produtos</h1>
+
+    <table id="tabelaProdutos">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela"></tbody>
+    </table>
+
+    <p id="mensagemCarregando" class="aviso">Carregando produtos...</p>
+
+    <script>
+        const corpoTabela = document.getElementById('corpoTabela');
+        const avisoCarregando = document.getElementById('mensagemCarregando');
+
+        function carregarTabela() {
+            let produtos = JSON.parse(localStorage.getItem('produtos_doceria')) || [];
+
+            if (produtos.length === 0) {
+                avisoCarregando.textContent = 'Nenhum produto cadastrado.';
+                corpoTabela.innerHTML = '';
+                return;
+            }
+
+            avisoCarregando.style.display = 'none';
+            let html = '';
+
+            for (let i = 0; i < produtos.length; i++) {
+                let p = produtos[i];
+                html += `
+                    <tr id="linha-${p.id}">
+                        <td>${p.id}</td>
+                        <td><strong>${p.nome}</strong></td>
+                        <td>R$ ${p.preco.toFixed(2)}</td>
+                        <td>
+                            <button class="btn-apagar" onclick="apagarProduto(${p.id})">Apagar</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            corpoTabela.innerHTML = html;
+        }
+
+        function apagarProduto(id) {
+            if (!confirm('Tem certeza que deseja apagar?')) return;
+
+            let produtos = JSON.parse(localStorage.getItem('produtos_doceria')) || [];
+            let novosProdutos = [];
+
+            for (let i = 0; i < produtos.length; i++) {
+                if (produtos[i].id !== id) {
+                    novosProdutos.push(produtos[i]);
+                }
+            }
+
+            localStorage.setItem('produtos_doceria', JSON.stringify(novosProdutos));
+            carregarTabela();
+            alert('Produto apagado com sucesso!');
+        }
+
+        carregarTabela();
+    </script>
+</body>
+</html>
